@@ -56,5 +56,5 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def comment_content(self):
-        return f'{self.comment}'
+    # def str_comment(self):
+    #     return f'{self.comment}'

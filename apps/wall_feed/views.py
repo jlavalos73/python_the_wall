@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from apps.wall_feed.models import *
+from .models import *
 from django.contrib import messages
 
 # Create your views here.
+# Comment.objects.all().delete()
 
 def index(request):
     return render(request, 'wall_feed/index.html')
@@ -44,6 +45,10 @@ def login(request):
 
     return redirect(f'/wall')
 
+def logout(request):
+    request.session.clear()
+    return redirect("/")
+
 
 def wall_feed(request):
 
@@ -59,26 +64,17 @@ def wall_feed(request):
 def post_message(request):
     user_id = request.session['user_id']
     this_user = User.objects.get(id = user_id)
-
-
-    new_message = Message.objects.create(message=request.POST['message_content'], user=this_user)
-    request.session['message_id'] = new_message.id
+    Message.objects.create(message=request.POST['message_content'], user=this_user)
 
     return redirect('/wall')
 
 
-def post_comment(request):
+def post_comment(request, message_id):
     this_user = User.objects.get(id = request.session['user_id'])
-    message_id = request.session['message_id']
     this_message = Message.objects.get(id = message_id)
     new_comment = Comment.objects.create(comment=request.POST['comment_content'], message=this_message, user=this_user)
-
-    request.session['comment_id'] = new_comment.id
+    this_message.comments.add(new_comment)
 
     print(new_comment)
     return redirect('/wall')
 
-
-def logout(request):
-    request.session.clear()
-    return redirect('/')

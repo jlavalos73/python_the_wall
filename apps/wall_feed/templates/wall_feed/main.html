@@ -21,22 +21,25 @@
             <input type="submit" name="create" value="Post a Message">
         </form>
 
-        <form name="message_block" action="/post_comment" method="POST">
-            {% csrf_token %}
+ 
+
             {% for message in messages.all %}
             <h3>{{message.user.full_name}} - {{message.created_at}}</h3>
                 <p>{{message.message}}</p>
-                <ul>
                     {% for comment in message.comments.all %}
                     <p>{{comment.user.full_name}} - {{comment.created_at}}</p>
-                    <p> {{message.comment.comment_content}} </p>
+                    <p> {{comment.comment}} </p>
                     {% endfor %}
-                    <p>Post a Comment</p>
-                    <input type="text" name="comment_content">
-                    <input type="submit" name="create" value="Post a Comment">
-                </ul>
+
+                <form name="message_block" action="/post_comment/{{message.id}}" method="POST">
+                {% csrf_token %}
+                <p>Post a Comment</p>
+                <input type="text" name="comment_content">
+                <input type="submit" name="create" value="Post a Comment">
+                </form>
+
             {% endfor %}
-        </form>
+
 
     </main>
 
